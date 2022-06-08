@@ -1,0 +1,80 @@
+package com.gon.utill;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import org.codehaus.jackson.map.ObjectMapper;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
+
+public class JsonUtill {
+	
+	// String을 JSONObject로 변환
+	public static JSONObject getJsonObjectFromString(String jsonStr) {
+		
+		JSONObject jsonObject = new JSONObject();
+		JSONParser jsonParser = new JSONParser();
+		
+		try {
+			
+			jsonObject = (JSONObject) jsonParser.parse(jsonStr);
+			
+		} catch(ParseException e) {
+			e.printStackTrace();
+		}
+		
+		return jsonObject;
+	}
+	
+	// JSONObejct를 Map<String, String>으로 변환
+	@SuppressWarnings("unchecked")
+	public static Map<String, Object> getMapFromJsonObject(JSONObject jsonObject){
+		
+		Map<String, Object> map = null;
+		
+		try {
+			
+			map = new ObjectMapper().readValue(jsonObject.toJSONString(), Map.class);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return map;
+	}
+	
+	// Map을 JSONString으로 변환
+	@SuppressWarnings("unchecked")
+	public static String getJsonStringFromMap(Map<String, Object> map) {
+		
+		JSONObject jsonObject = new JSONObject();
+		
+		for(Map.Entry<String, Object> entry : map.entrySet()) {
+			jsonObject.put(entry.getKey(), entry.getValue());
+		}
+		
+		return jsonObject.toJSONString();
+	}
+	
+	// JSONArray를 List<Map<STring, String>>으로 변환
+	public static List<Map<String, Object>> getListmapFromJsonArray(JSONArray jsonArray){
+		
+		List<Map<String, Object>> list = new ArrayList<Map<String,Object>>();
+		
+		if (jsonArray != null) {
+			int jsonSize = jsonArray.size();
+			for(int i = 0; i<jsonSize; i++) {
+				Map<String, Object> map = getMapFromJsonObject((JSONObject)jsonArray.get(i));
+				list.add(map);
+			}
+		}
+		
+		return list;
+	}
+	
+	
+	
+}
